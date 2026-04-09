@@ -23,10 +23,16 @@ function doPost(e) {
       sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     }
 
+    // Build a case-insensitive lookup so "name" matches column "Name", etc.
+    var headerLower = headers.map(function (h) { return h.toLowerCase(); });
+
     var output = [];
     rows.forEach(function (row) {
-      var newRow = headers.map(function (header) {
-        return row[header] !== undefined ? row[header] : "";
+      var rowLower = {};
+      Object.keys(row).forEach(function (k) { rowLower[k.toLowerCase()] = row[k]; });
+
+      var newRow = headerLower.map(function (h) {
+        return rowLower[h] !== undefined ? rowLower[h] : "";
       });
       sheet.appendRow(newRow);
       output.push(newRow);

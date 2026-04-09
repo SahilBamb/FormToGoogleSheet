@@ -18,15 +18,9 @@ export function submit(data) {
 
   return fetch(_url, {
     method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify(body),
-  }).then((res) => {
-    if (res.type === "opaque") {
-      return { status: "ok", note: "opaque response (no-cors mode)" };
-    }
-    return res.json();
-  });
+    redirect: "follow",
+  }).then((res) => res.json());
 }
 
 export function bind(selectorOrEl, opts = {}) {

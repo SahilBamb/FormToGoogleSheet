@@ -69,13 +69,16 @@
 
     <form id="contact-form">
       <label for="name">Name</label>
-      <input type="text" id="name" name="name" required />
+      <input type="text" id="name" name="Name" required />
 
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required />
+      <label for="company">Company Name</label>
+      <input type="text" id="company" name="Company Name" />
 
-      <label for="message">Message</label>
-      <textarea id="message" name="message" rows="3" required></textarea>
+      <label for="phone">Phone</label>
+      <input type="tel" id="phone" name="Phone" required />
+
+      <label for="city">City</label>
+      <input type="text" id="city" name="City" />
 
       <button type="submit" id="submit-btn">Submit</button>
     </form>
@@ -87,7 +90,7 @@
   <script src="form-to-sheet.js"></script>
   <script>
     // 2. Point it at your deployed Apps Script URL
-    FormToSheet.init("YOUR_APPS_SCRIPT_URL_HERE");
+    FormToSheet.init("https://script.google.com/macros/...");
 
     // 3. Bind the form — that's it!
     FormToSheet.bind("#contact-form", {

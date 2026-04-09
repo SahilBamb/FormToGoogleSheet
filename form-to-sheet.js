@@ -48,18 +48,14 @@
     _ensureInit();
     var body = Array.isArray(data) ? { rows: data } : data;
 
+    // Google Apps Script redirects (302) to script.googleusercontent.com which
+    // returns proper CORS headers, so default cors mode works and lets us read
+    // the response for real error reporting.
     return fetch(_url, {
       method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(body),
+      redirect: "follow",
     }).then(function (res) {
-      // Google Apps Script redirects and returns opaque responses in no-cors
-      // mode, so we can't reliably read the body. If the fetch didn't throw,
-      // the request was accepted.
-      if (res.type === "opaque") {
-        return { status: "ok", note: "opaque response (no-cors mode)" };
-      }
       return res.json();
     });
   }
