@@ -1,6 +1,6 @@
 {
   "name": "form-to-google-sheet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Submit HTML form data straight to a Google Sheet. No API keys, no server, no database.",
   "main": "form-to-sheet.js",
   "module": "index.mjs",
