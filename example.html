@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FormToGoogleSheet — Example</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    p.subtitle { color: #6e6e73; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
+    input, textarea {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid #d2d2d7;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { outline: none; border-color: #0071e3; }
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      background: #0071e3;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #005bb5; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .toast {
+      margin-top: 1rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: none;
+    }
+    .toast.success { display: block; background: #e8f5e9; color: #2e7d32; }
+    .toast.error   { display: block; background: #fdecea; color: #c62828; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Contact Us</h1>
+    <p class="subtitle">This form writes directly to a Google Sheet.</p>
+
+    <form id="contact-form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="3" required></textarea>
+
+      <button type="submit" id="submit-btn">Submit</button>
+    </form>
+
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <!-- 1. Include the library -->
+  <script src="form-to-sheet.js"></script>
+  <script>
+    // 2. Point it at your deployed Apps Script URL
+    FormToSheet.init("YOUR_APPS_SCRIPT_URL_HERE");
+
+    // 3. Bind the form — that's it!
+    FormToSheet.bind("#contact-form", {
+      onSuccess: function () {
+        showToast("Submitted — check your Google Sheet!", "success");
+      },
+      onError: function (err) {
+        showToast("Something went wrong: " + err.message, "error");
+      },
+    });
+
+    function showToast(msg, type) {
+      var toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.className = "toast " + type;
+      setTimeout(function () { toast.className = "toast"; }, 4000);
+    }
+  </script>
+</body>
+</html>

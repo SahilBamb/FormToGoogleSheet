@@ -1,0 +1,47 @@
+{
+  "name": "form-to-google-sheet",
+  "version": "1.0.0",
+  "description": "Submit HTML form data straight to a Google Sheet. No API keys, no server, no database.",
+  "main": "form-to-sheet.js",
+  "module": "index.mjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./form-to-sheet.js",
+      "default": "./form-to-sheet.js"
+    }
+  },
+  "browser": "form-to-sheet.js",
+  "unpkg": "form-to-sheet.js",
+  "jsdelivr": "form-to-sheet.js",
+  "files": [
+    "form-to-sheet.js",
+    "index.mjs",
+    "Code.gs",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "google-sheets",
+    "google-sheet",
+    "form",
+    "form-submit",
+    "spreadsheet",
+    "google-apps-script",
+    "no-server",
+    "serverless"
+  ],
+  "author": "Sahil",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sahil/form-to-google-sheet.git"
+  },
+  "homepage": "https://github.com/sahil/form-to-google-sheet#readme",
+  "bugs": {
+    "url": "https://github.com/sahil/form-to-google-sheet/issues"
+  }
+}
