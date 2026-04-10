@@ -43,5 +43,8 @@
   "homepage": "https://github.com/sahil/form-to-google-sheet#readme",
   "bugs": {
     "url": "https://github.com/sahil/form-to-google-sheet/issues"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
