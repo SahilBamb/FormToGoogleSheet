@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FormToGoogleSheet — Capture leads straight to Google Sheets</title>
+  <meta name="description" content="Stop losing leads from your website. One script tag sends form submissions straight to Google Sheets. No Zapier, no backend, no API keys." />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-page: #fafbfc;
+      --bg-card: #ffffff;
+      --bg-elevated: #f6f8fa;
+      --border: #e1e4e8;
+      --text: #0d1117;
+      --text-secondary: #656d76;
+      --text-tertiary: #8b949e;
+      --green: #1a7f37;
+      --green-light: #2da44e;
+      --green-bg: rgba(26, 127, 55, 0.06);
+      --green-border: rgba(26, 127, 55, 0.15);
+      --radius: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03);
+      --shadow-md: 0 3px 12px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.03);
+      --nav-bg: rgba(255, 255, 255, 0.8);
+      --overlay-bg: rgba(0, 0, 0, 0.25);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --bg-page: #010409;
+        --bg-card: #161b22;
+        --bg-elevated: #1c2128;
+        --border: #30363d;
+        --text: #e6edf3;
+        --text-secondary: #8b949e;
+        --text-tertiary: #656d76;
+        --green: #3fb950;
+        --green-light: #2ea043;
+        --green-bg: rgba(63, 185, 80, 0.1);
+        --green-border: rgba(63, 185, 80, 0.2);
+        --shadow: 0 0 0 1px rgba(255,255,255,0.04);
+        --shadow-md: 0 3px 12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.04);
+        --nav-bg: rgba(13, 17, 23, 0.8);
+        --overlay-bg: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    code { font-family: var(--mono); }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ==================== NAV ==================== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text);
+    }
+    .logo-mark {
+      width: 26px; height: 26px;
+      background: var(--green);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-mark svg { display: block; }
+    .nav-right { display: flex; align-items: center; gap: 0.25rem; }
+    .nav-link {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .green-link {
+      color: var(--green);
+      text-decoration: underline;
+    }
+    .nav-link:hover { color: var(--text); background: var(--bg-elevated); }
+    .nav-cta {
+      margin-left: 0.5rem;
+      padding: 0.4rem 1rem;
+      background: var(--green-light);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+    .nav-cta:hover { background: var(--green); }
+
+    /* ==================== HERO ==================== */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 3rem;
+      padding-top: 56px;
+    }
+    .hero-content { padding: 4rem 0; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem 0.35rem 0.6rem;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--green);
+      margin-bottom: 1.75rem;
+    }
+    .hero-badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green-light);
+      box-shadow: 0 0 6px var(--green-light);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--green);
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 0.5rem;
+      max-width: 480px;
+    }
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--text-tertiary);
+      margin-bottom: 2.25rem;
+    }
+    .hero-tag span { color: var(--green); }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-width: 400px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      text-align: center;
+    }
+    .btn-primary {
+      background: var(--green-light);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--green);
+    }
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-elevated);
+    }
+    .btn-outline-green {
+      background: var(--bg);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+    }
+    .btn-outline-green:hover {
+      background: var(--green-bg);
+    }
+    .btn-icon { font-size: 1rem; flex-shrink: 0; }
+    .btn-sub {
+      font-size: 0.72rem;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-left: 0.25rem;
+    }
+    .btn-relative { position: relative; }
+    .copied-tip {
+      position: absolute;
+      top: -32px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: var(--text);
+      color: #000000;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .copied-tip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--text);
+    }
+    .copied-tip.show { opacity: 1; transform: translateX(-50%) scale(1); }
+
+    /* hero right — demo */
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 0;
+    }
+    .demo-frame {
+      width: 100%;
+      max-width: 560px;
+      aspect-ratio: 16 / 10;
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-md);
+    }
+    .demo-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+    .demo-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+    }
+    .play-circle {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .play-circle:hover { transform: scale(1.06); }
+    .play-circle svg { margin-left: 2px; }
+
+    /* ==================== SECTIONS ==================== */
+    section { padding: 6rem 0; }
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+    .section-sub {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 500px;
+    }
+    .section-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+
+    /* ==================== CODE SHOWCASE ==================== */
+    .setup-section { border-top: 1px solid var(--border); background: var(--bg-page); }
+    .setup-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .code-window {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 580px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+    .code-window-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .cw-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+    .cw-label {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      font-family: var(--mono);
+    }
+    .code-body { padding: 1.5rem 1.75rem; }
+    .code-body pre {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      line-height: 1.75;
+      text-align: left;
+      overflow-x: auto;
+      color: var(--text);
+    }
+    .code-body .cm { color: var(--text-tertiary); }
+    .code-body .tg { color: var(--green); }
+    .code-body .at { color: var(--text-secondary); }
+    .code-body .st { color: var(--green); }
+    .code-body .fn { color: var(--text); }
+    .code-copy {
+      position: absolute;
+      top: 46px; right: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .code-copy:hover { color: var(--text); }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+    }
+    .stat-val {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .stat-lbl { font-size: 0.73rem; color: var(--text-tertiary); }
+
+    /* ==================== STEPS ==================== */
+    .steps-section { border-top: 1px solid var(--border); }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      transition: box-shadow 0.2s;
+    }
+    .step-card:hover { box-shadow: var(--shadow-md); }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--green);
+      margin-bottom: 1rem;
+    }
+    .step-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .step-card p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.55; }
+    .step-card code {
+      font-size: 0.8rem;
+      color: var(--green);
+      background: var(--green-bg);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    /* ==================== COMPARE ==================== */
+    .compare-section { border-top: 1px solid var(--border); background: var(--bg-page); }
+    .compare-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      max-width: 720px;
+      margin: 0 auto;
+      box-shadow: var(--shadow);
+    }
+    .compare-card table { width: 100%; border-collapse: collapse; }
+    .compare-card th {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-card td {
+      padding: 0.85rem 1.5rem;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-card tr:last-child td { border-bottom: none; }
+    .compare-card td:first-child { color: var(--text-secondary); }
+    .val-good { color: var(--green); font-weight: 600; }
+    .val-bad { color: var(--text-tertiary); }
+
+    /* ==================== FEATURES ==================== */
+    .features-section { border-top: 1px solid var(--border); }
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .feat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: box-shadow 0.2s;
+    }
+    .feat-card:hover { box-shadow: var(--shadow-md); }
+    .feat-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-bottom: 0.85rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+    }
+    .feat-card h3 { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .feat-card p { color: var(--text-secondary); font-size: 0.82rem; line-height: 1.55; }
+
+    /* ==================== BOTTOM CTA ==================== */
+    .final-cta {
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .final-cta .section-title { margin-bottom: 0.75rem; }
+    .final-cta .section-sub { margin-bottom: 2rem; }
+    .final-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ==================== MODAL ==================== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--overlay-bg);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-md);
+      animation: modalIn 0.2s ease-out;
+      position: relative;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 1.75rem 0;
+    }
+    .modal-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: var(--bg-elevated); color: var(--text); }
+    .modal-sub {
+      padding: 0.5rem 1.75rem 0;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+    .modal-body { padding: 1.25rem 1.75rem 1.75rem; }
+    .modal-body label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+    .modal-body input,
+    .modal-body textarea {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      margin-bottom: 0.85rem;
+      transition: border-color 0.15s;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .modal-body input:focus,
+    .modal-body textarea:focus {
+      outline: none;
+      border-color: var(--green-light);
+      box-shadow: 0 0 0 3px var(--green-bg);
+    }
+    .modal-body textarea { resize: vertical; min-height: 60px; }
+    .modal-submit {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--green-light);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 0.25rem;
+    }
+    .modal-submit:hover { background: var(--green); }
+    .modal-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .modal-success {
+      text-align: center;
+      padding: 3rem 1.75rem;
+    }
+    .modal-success-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--green-bg);
+      border: 2px solid var(--green-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.3rem;
+    }
+    .modal-success h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+    .modal-success p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.75rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+    }
+    footer a { color: var(--text-secondary); transition: color 0.15s; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-content { padding: 7rem 0 0; text-align: center; }
+      .hero-content .cta-group { max-width: 100%; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-visual { padding: 2rem 0 3rem; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .feat-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .nav-link:not(.nav-cta) { display: none; }
+      .hero-content { padding-top: 6rem; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .compare-card th, .compare-card td { padding: 0.7rem 1rem; font-size: 0.82rem; }
+      .final-buttons { flex-direction: column; align-items: center; width: 100%; max-width: 360px; }
+      .final-buttons .btn { width: 100%; }
+      footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+      .modal-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      FormToGoogleSheet
+    </a>
+    <div class="nav-right">
+      <a href="#how" class="nav-link">How It Works</a>
+      <a href="#features" class="nav-link">Features</a>
+      <a href="https://github.com/sahilbambulkar/form-to-google-sheet" target="_blank" class="nav-link">GitHub</a>
+      <a href="https://www.npmjs.com/package/form-to-google-sheet" target="_blank" class="nav-link">npm</a>
+      <a href="#setup" class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Open source &middot; free forever
+      </div>
+      <h1>Connect your Website to a Google Sheet <em>In 1 Minute</em></h1>
+      <p class="hero-sub">
+        Zapier/Make flows lose 5% of leads, stop losing leads.
+
+      </p>
+      <p class="hero-sub">(and stop paying Zapier/Make $100+ a month)</p>
+      <p class="hero-tag"><span>One script tag.</span> Simply easy.</p>
+
+      <div class="cta-group">
+        <button class="btn btn-secondary btn-relative" id="agent-btn" type="button">
+          <span class="btn-icon">&#x2728;</span>
+          Have Your Agent Do It <span class="btn-sub">(token cost: ~$15.00)</span>
+          <span class="copied-tip" id="agent-tip">Copied to clipboard! (now paste it to your agent)</span>
+        </button>
+        <a href="#setup" class="btn btn-primary">
+          <span class="btn-icon">&lt;/&gt;</span>
+          Install yourself with one line of code <span class="btn-sub">(free)</span>
+        </a>
+        <button class="btn btn-outline-green" id="hire-btn" type="button">
+          Pay Me $100 to Do It For You
+          <span class="btn-sub">(Lifetime Offer)</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="demo-frame">
+        <div class="demo-titlebar">
+          <span class="demo-dot"></span>
+          <span class="demo-dot"></span>
+          <span class="demo-dot"></span>
+        </div>
+          <video class="demo-body"src="https://8lzpee0z7c.ufs.sh/f/j3W8qoceh0uN2X6C7r9HToY4BNi0gAap5rxEVGuc6W9qsZl8" autoplay muted loop></video>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CODE SHOWCASE ============ -->
+  <section class="setup-section" id="setup">
+    <div class="container setup-inner" style="padding: 6rem 0;">
+      <span class="section-tag">The entire setup</span>
+      <h2 class="section-title">No backend needed.<br/>Just drop in one tag.</h2>
+      <p class="section-sub">Add the script, point it at your Google Sheet, and every form submission lands in a new row.</p>
+
+      <div class="code-window">
+        <div class="code-window-bar">
+          <span class="cw-dot"></span>
+          <span class="cw-dot"></span>
+          <span class="cw-dot"></span>
+          <span class="cw-label">index.html</span>
+        </div>
+        <button class="code-copy" id="copy-code-btn">Copy</button>
+        <div class="code-body">
+<pre><span class="cm">&lt;!-- 1. Add the script --&gt;</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"https://unpkg.com/form-to-google-sheet"</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- 2. Point it at your sheet --&gt;</span>
+<span class="tg">&lt;script&gt;</span>
+  <span class="fn">FormToSheet</span>.<span class="fn">init</span>(<span class="st">"YOUR_APPS_SCRIPT_URL"</span>);
+  <span class="fn">FormToSheet</span>.<span class="fn">bind</span>(<span class="st">"#my-form"</span>);
+<span class="tg">&lt;/script&gt;</span></pre>
+        </div>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-val">~1 KB</span>
+          <span class="stat-lbl">gzipped</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">0</span>
+          <span class="stat-lbl">dependencies</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">0</span>
+          <span class="stat-lbl">API keys</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">1 min</span>
+          <span class="stat-lbl">setup</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="steps-section" id="how">
+    <div class="container" style="padding: 6rem 0;">
+      <div class="section-header">
+        <span class="section-tag">How it works</span>
+        <h2 class="section-title">Three steps. Five minutes.</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>Paste the script into your Sheet</h3>
+          <p>Open <strong>Extensions &rarr; Apps Script</strong> in your Google Sheet and paste the 30-line backend script. No Google Cloud, no credentials.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>Deploy as a Web App</h3>
+          <p>Click <strong>Deploy &rarr; New Deployment &rarr; Web App</strong>. Set access to "Anyone." Copy the URL you get back.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>Add one script tag</h3>
+          <p>Drop in the <code>&lt;script&gt;</code> tag, call <code>FormToSheet.bind()</code>, and every submission goes straight to your Sheet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPARISON ============ -->
+  <section class="compare-section" id="compare">
+    <div class="container" style="padding: 6rem 0;">
+      <div class="section-header">
+        <span class="section-tag">Why not Zapier?</span>
+        <h2 class="section-title">You don't need a<br/>$100/mo middleman.</h2>
+        <p class="section-sub">Zapier, Make, and other automation tools charge per task. This is free forever.</p>
+      </div>
+      <div class="compare-card">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>FormToGoogleSheet</th>
+              <th>Zapier / Make</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Monthly cost</td><td class="val-good">$0</td><td class="val-bad">$20 &ndash; $100+</td></tr>
+            <tr><td>Setup time</td><td class="val-good">1 minute</td><td class="val-bad">30+ minutes</td></tr>
+            <tr><td>External accounts</td><td class="val-good">0</td><td class="val-bad">2 &ndash; 3</td></tr>
+            <tr><td>Task limits</td><td class="val-good">~20,000 / day</td><td class="val-bad">100 &ndash; 750 / mo</td></tr>
+            <tr><td>Debugging</td><td class="val-good">Open the Sheet</td><td class="val-bad">Zap history logs</td></tr>
+            <tr><td>Vendor lock-in</td><td class="val-good">None</td><td class="val-bad">Platform-dependent</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="features-section" id="features">
+    <div class="container" style="padding: 6rem 0;">
+      <div class="section-header">
+        <span class="section-tag">Features</span>
+        <h2 class="section-title">Everything you need.<br/>Nothing you don't.</h2>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon">&#9889;</div>
+          <h3>One Script Tag</h3>
+          <p>Works in React, Next.js, plain HTML, WordPress (anywhere JavaScript runs).</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">&#128274;</div>
+          <h3>No API Keys</h3>
+          <p>Google Apps Script under the hood. No Cloud Console, no OAuth, no service accounts.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">&#128196;</div>
+          <h3>Auto-Match Columns</h3>
+          <p>Form field names map to sheet headers automatically. Case-insensitive matching built in.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">&#128230;</div>
+          <h3>npm or CDN</h3>
+          <p><code>npm install</code> for bundlers. Or use the unpkg / jsdelivr CDN link. Zero config.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">&#128210;</div>
+          <h3>Batch Submissions</h3>
+          <p>Send multiple rows at once with <code>FormToSheet.submit([...rows])</code>.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">&#x1F6E1;&#xFE0F;</div>
+          <h3>Your Data, Your Sheet</h3>
+          <p>No third-party database. No vendor lock-in. Just a Google Sheet you already own.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BOTTOM CTA ============ -->
+  <section class="final-cta" style="padding: 6rem 0;">
+    <div class="container" style="display:flex;flex-direction:column;align-items:center;">
+      <h2 class="section-title">Ship your form.<br/>Not your weekend.</h2>
+      <p class="section-sub" style="margin-bottom:2rem;">Free and open source. Set up in five minutes. Start capturing leads today.</p>
+      <div class="final-buttons">
+        <a href="#setup" class="btn btn-primary">
+          <span class="btn-icon">&lt;/&gt;</span>
+          Get started
+        </a>
+        <a href="https://github.com/sahilbambulkar/form-to-google-sheet" class="btn btn-secondary" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="container">
+    <span>Built by <a href="https://www.linkedin.com/in/sahil-bambulkar/" target="_blank">Sahil Bambulkar</a></span>
+    <div class="footer-links">
+      <a href="https://github.com/sahilbambulkar/form-to-google-sheet" target="_blank">GitHub</a>
+      <a href="https://www.npmjs.com/package/form-to-google-sheet" target="_blank">npm</a>
+    </div>
+  </footer>
+
+  <!-- ============ MODAL ============ -->
+  <div class="modal-overlay" id="hire-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Let <a class="green-link" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sahil-bambulkar/">me</a> set it up for you</h2>
+        <button class="modal-close" id="modal-close" type="button">&times;</button>
+      </div>
+      <p class="modal-sub">I'll install FormToGoogleSheet in your project, configure the Google Sheet, and make sure everything works (I used it for this form too!)</p>
+
+      <div class="modal-body" id="modal-form-body">
+        <form id="hire-form">
+          <div class="modal-row">
+            <div>
+              <label for="hire-name">Name</label>
+              <input type="text" id="hire-name" name="Name" required />
+            </div>
+            <div>
+              <label for="hire-company">Company</label>
+              <input type="text" id="hire-company" name="Company" />
+            </div>
+          </div>
+
+          <label for="hire-email">Email</label>
+          <input type="email" id="hire-email" name="Email" required />
+
+          <label for="hire-phone">Phone Number</label>
+          <input type="tel" id="hire-phone" name="Phone" />
+
+          <label for="hire-url">Project URL</label>
+          <input type="text" id="hire-url" name="Project URL" placeholder="https://..." />
+
+          <label for="hire-other">Anything else?</label>
+          <textarea id="hire-other" name="Other" rows="3" placeholder="Tell me about your project, timeline, etc."></textarea>
+
+          <button type="submit" class="modal-submit">Submit Request</button>
+        </form>
+      </div>
+
+      <div class="modal-success" id="modal-success" style="display:none;">
+        <div class="modal-success-icon">&#10003;</div>
+        <h3>Request received!</h3>
+        <p>I'll be in touch within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script src="form-to-sheet.js"></script>
+  <script src="site.js"></script>
+</body>
+</html>

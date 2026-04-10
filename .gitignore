@@ -1,6 +1,3 @@
 node_modules/
 .DS_Store
 *.log
-index.html
-assets/*
-site.js
