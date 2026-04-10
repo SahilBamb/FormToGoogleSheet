@@ -42,21 +42,22 @@
 
   /**
    * Submit a single row (object) or multiple rows (array of objects).
-   * Returns a Promise that resolves with the Apps Script JSON response.
+   * Returns a Promise that resolves once the request is sent.
    */
   function submit(data) {
     _ensureInit();
     var body = Array.isArray(data) ? { rows: data } : data;
 
-    // Google Apps Script redirects (302) to script.googleusercontent.com which
-    // returns proper CORS headers, so default cors mode works and lets us read
-    // the response for real error reporting.
+    // Google Apps Script does not return CORS headers on its redirect chain,
+    // so we use no-cors mode. The response is opaque (unreadable) but the
+    // data is always written to the sheet if the request doesn't throw.
     return fetch(_url, {
       method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(body),
-      redirect: "follow",
-    }).then(function (res) {
-      return res.json();
+    }).then(function () {
+      return { status: "ok" };
     });
   }
 

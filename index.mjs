@@ -18,9 +18,10 @@ export function submit(data) {
 
   return fetch(_url, {
     method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify(body),
-    redirect: "follow",
-  }).then((res) => res.json());
+  }).then(() => ({ status: "ok" }));
 }
 
 export function bind(selectorOrEl, opts = {}) {

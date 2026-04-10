@@ -15,10 +15,12 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
     var rows = data.rows || [data]; // accept a single object or { rows: [...] }
 
-    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].filter(String);
+    var lastCol = sheet.getLastColumn();
+    var headers = lastCol > 0
+      ? sheet.getRange(1, 1, 1, lastCol).getValues()[0].filter(String)
+      : [];
 
     if (headers.length === 0) {
-      // Sheet is empty — use the keys from the first row as headers
       headers = Object.keys(rows[0]);
       sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     }
