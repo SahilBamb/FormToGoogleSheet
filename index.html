@@ -328,6 +328,12 @@
     }
     .play-circle:hover { transform: scale(1.06); }
     .play-circle svg { margin-left: 2px; }
+    .demo-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
     /* ==================== SECTIONS ==================== */
     section { padding: 6rem 0; }
@@ -661,6 +667,23 @@
       margin-top: 0.25rem;
     }
     .modal-submit:hover { background: var(--green); }
+    .modal-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .modal-submit:disabled:hover { background: var(--green-light); }
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .modal-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -785,7 +808,7 @@
           <span class="demo-dot"></span>
           <span class="demo-dot"></span>
         </div>
-          <video class="demo-body"src="https://8lzpee0z7c.ufs.sh/f/j3W8qoceh0uN2X6C7r9HToY4BNi0gAap5rxEVGuc6W9qsZl8" autoplay muted loop></video>
+          <video class="demo-video" src="https://8lzpee0z7c.ufs.sh/f/j3W8qoceh0uN2X6C7r9HToY4BNi0gAap5rxEVGuc6W9qsZl8" autoplay muted loop playsinline></video>
       </div>
     </div>
   </section>

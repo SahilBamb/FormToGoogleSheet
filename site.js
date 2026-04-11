@@ -69,11 +69,26 @@ document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") modal.classList.remove("open");
 });
 
-// Use FormToSheet.bind to wire up the modal form — same API users will use
+// Wire up the modal form with loading state
+var hireForm = document.getElementById("hire-form");
+var submitBtn = hireForm.querySelector(".modal-submit");
+var submitBtnText = submitBtn.textContent;
+
 FormToSheet.bind("#hire-form", {
   onSuccess: function () {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = submitBtnText;
     modalFormBody.style.display = "none";
     modalSuccess.style.display = "";
   },
+  onError: function () {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = submitBtnText;
+  },
   resetOnSuccess: false,
+});
+
+hireForm.addEventListener("submit", function () {
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner"></span>Submitting...';
 });
