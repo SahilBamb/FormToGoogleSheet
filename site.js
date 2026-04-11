@@ -69,6 +69,28 @@ document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") modal.classList.remove("open");
 });
 
+// ---- Mobile demo video modal ----
+var videoModal = document.getElementById("video-modal");
+var videoEl = videoModal.querySelector("video");
+
+document.getElementById("demo-mobile-btn").addEventListener("click", function () {
+  videoModal.classList.add("open");
+  videoEl.currentTime = 0;
+  videoEl.play();
+});
+
+document.getElementById("video-modal-close").addEventListener("click", function () {
+  videoModal.classList.remove("open");
+  videoEl.pause();
+});
+
+videoModal.addEventListener("click", function (e) {
+  if (e.target === videoModal) {
+    videoModal.classList.remove("open");
+    videoEl.pause();
+  }
+});
+
 // Wire up the modal form with loading state
 var hireForm = document.getElementById("hire-form");
 var submitBtn = hireForm.querySelector(".modal-submit");

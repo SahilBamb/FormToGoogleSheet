@@ -728,12 +728,68 @@
     .footer-links { display: flex; gap: 1.5rem; }
 
     /* ==================== RESPONSIVE ==================== */
+    /* mobile demo button — hidden on desktop */
+    .demo-mobile-btn { display: none; }
+
+    /* video modal */
+    .video-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--overlay-bg);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .video-overlay.open { display: flex; }
+    .video-modal {
+      width: 100%;
+      max-width: 720px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      animation: modalIn 0.2s ease-out;
+      position: relative;
+    }
+    .video-modal-bar {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .video-modal-bar span { width: 10px; height: 10px; border-radius: 50%; background: var(--border); margin-right: 6px; }
+    .video-modal-close {
+      margin-left: auto;
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      transition: all 0.15s;
+    }
+    .video-modal-close:hover { background: var(--bg-elevated); color: var(--text); }
+    .video-modal video {
+      width: 100%;
+      display: block;
+    }
+
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr; }
       .hero-content { padding: 7rem 0 0; text-align: center; }
       .hero-content .cta-group { max-width: 100%; }
       .hero-sub { margin-left: auto; margin-right: auto; }
-      .hero-visual { padding: 2rem 0 3rem; }
+      .hero-visual { display: none; }
+      .demo-mobile-btn { display: flex; }
       .steps-grid { grid-template-columns: 1fr; }
       .feat-grid { grid-template-columns: 1fr 1fr; }
     }
@@ -797,6 +853,9 @@
         <button class="btn btn-outline-green" id="hire-btn" type="button">
           Pay Me $100 to Do It For You
           <span class="btn-sub">(Lifetime Offer)</span>
+        </button>
+        <button class="btn btn-secondary demo-mobile-btn" id="demo-mobile-btn" type="button">
+          &#9654; View 1 Minute Demo
         </button>
       </div>
     </div>
@@ -1030,6 +1089,17 @@
         <h3>Request received!</h3>
         <p>I'll be in touch within 24 hours.</p>
       </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO MODAL ============ -->
+  <div class="video-overlay" id="video-modal">
+    <div class="video-modal">
+      <div class="video-modal-bar">
+        <span></span><span></span><span></span>
+        <button class="video-modal-close" id="video-modal-close" type="button">&times;</button>
+      </div>
+      <video src="https://8lzpee0z7c.ufs.sh/f/j3W8qoceh0uN2X6C7r9HToY4BNi0gAap5rxEVGuc6W9qsZl8" controls playsinline></video>
     </div>
   </div>
 
